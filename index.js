@@ -2,6 +2,8 @@
 const express = require('express');
 const morgan = require( 'morgan' );
 const bodyParcer = require('body-parser');
+const bcrypt = require( 'bcryptjs' );
+const jsonwebtoken = require( 'jsonwebtoken' );
 const validator = require('./middleware/validateToken');
 const {VideoGames} = require('./models/VideoGameModel');
 const {Genres} = require('./models/GenreModel');
@@ -9,16 +11,59 @@ const {Consoles} = require('./models/ConsoleModel');
 const {Developers} = require('./models/DeveloperModel');
 const {Users} = require('./models/UsersModel');
 const {Ratings} = require('./models/RatingsModel');
-const {DATABASE_URL, PORT} = require( './config' );
+const {DATABASE_URL, PORT, SECRET_TOKEN} = require( './config' );
 const cors = require( './middleware/cors' );
 const app = express();
 const jsonParser = bodyParcer.json();
-var mongoose = require('mongoose');
+const mongoose = require( 'mongoose' );
 
 app.use( cors );
 app.use( express.static( "public" ) );
 app.use(morgan('dev'));
 
+app.post( '/api/users/login', jsonParser, ( req, res ) => {
+    let { email, password } = req.body;
+
+    if(!email || !password ){
+        res.statusMessage = "Parameter missing in the body of the request.";
+        return res.status( 406 ).end();
+    }
+
+    Users
+        .getUserByEmail( email )
+        .then( user => {
+            bcrypt.compare( password, user.password )
+                .then( result => {
+                    if( result ){
+
+                        let userData = {
+                            name : user.name,
+                            email : user.email
+                        };
+
+                        jsonwebtoken.sign( userData, SECRET_TOKEN, {expiresIn : '1m'}, ( err, token ) => {
+                            if( err ){
+                                res.statusMessage = err.message;
+                                return res.status( 400 ).end();
+                            }
+                            return res.status( 200 ).json( { token } );
+                        });
+                    }
+                    else{
+                        res.statusMessage = "Wrong credentials.";
+                        return res.status( 409 ).end();
+                    }
+                })
+                .catch( err => {
+                    res.statusMessage = err.message;
+                    return res.status( 400 ).end();
+                });
+        })
+        .catch( err => {
+            res.statusMessage = err.message;
+            return res.status( 400 ).end();
+        });
+});
 
 app.get('/api/games',(req,res)=>{
     VideoGames.getAllVideoGames()
@@ -174,26 +219,35 @@ app.post('/api/users',jsonParser,(req,res)=>{
 
     let name = req.body.name;
     let email = req.body.email;
-    if( !name  || !email){
+    let password = req.body.password;
+    if( !name  || !email || !password){
         res.statusMessage = "One parameter is missing";
         return res.status( 406 ).end();
     }
-    
-    let newUser = { name,email};
-    Users
-    .createUser(newUser)
-    .then(result =>{
-        return res.status(201).json(result);
-    })
-    .catch(err =>{
-        res.statusMessage = "Something went wrong with the DB,Try again Later.";
-        return res.status(500).end();
-    })
+
+    bcrypt.hash(password, 10)
+        .then( hashedPassword => {
+            let newUser = {
+                name,
+                password : hashedPassword,
+                email
+            };
+
+            Users
+                .createUser( newUser )
+                .then(result => {
+                    return res.status(201).json( result );
+                })
+                .catch(err => {
+                    res.statusMessage = "Something went wrong with the DB,Try again Later.";
+                    return res.status(500).end();
+                })
+        })
+        .catch( err => {
+            res.statusMessage = err.message;
+            return res.status( 400 ).end();
+        });
 });
-
-
-
-
 
 app.listen(PORT, () =>
 {
