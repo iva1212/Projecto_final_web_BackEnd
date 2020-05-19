@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const UsersCollectionSchema = mongoose.Schema({
 
@@ -19,9 +19,13 @@ const UsersCollectionSchema = mongoose.Schema({
     ratings : [{
         type: mongoose.Schema.Types.ObjectId, ref: 'rating'
     }],
+    password : {
+        type : String,
+        required : true
+    }
 });
 
-const UsersCollection = mongoose.model('users',UsersCollectionSchema);
+const UsersCollection = mongoose.model('users', UsersCollectionSchema);
 
 const Users = {
     createUser : function(newUser){
@@ -33,7 +37,7 @@ const Users = {
             return err;
         });
     },
-    getAllUsers: function(){
+    getAllUsers : function(){
         return UsersCollection
         .find()
         .then(allUsers =>{
@@ -43,7 +47,16 @@ const Users = {
             return err;
         });
     },
-
+    getUserByEmail : function( email ){
+        return UsersCollection
+                .findOne( { email } )
+                .then( user => {
+                    return user;
+                })
+                .catch( err => {
+                    throw new Error( err.message );
+                }); 
+    }
 }
 
 module.exports = {Users};
