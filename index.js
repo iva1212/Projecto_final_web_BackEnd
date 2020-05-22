@@ -81,6 +81,7 @@ app.post('/api/games',jsonParser,(req,res)=>{
 
     let title = req.body.title;
     let description = req.body.description;
+    let year = req.body.year;
     let img_url = req.body.img_url;
     let consoleId = req.body.consoleId;
     let developerId = req.body.developerId;
@@ -90,7 +91,7 @@ app.post('/api/games',jsonParser,(req,res)=>{
 
         return res.status( 406 ).end();
     }
-    let newVideoGame = { title,description,img_url,consoleId,developerId,genres};
+    let newVideoGame = { title,description,year,img_url,consoleId,developerId,genres};
     VideoGames
     .createVideoGame(newVideoGame)
     .then(result =>{

@@ -9,6 +9,9 @@ const VideoGamesCollectionSchema = mongoose.Schema({
         type: String,
         required : true,
     },
+    year:{
+        type: Number
+    },
     img_url : {
         type: String,
         required : true,
