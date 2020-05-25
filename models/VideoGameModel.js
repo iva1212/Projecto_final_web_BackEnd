@@ -22,14 +22,14 @@ const VideoGamesCollectionSchema = mongoose.Schema({
     realeseDate : {
         type:String
     },
-    consoleId: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'consoles'
-    },
+    consoles: [{
+        type: String
+    }],
     developerId:{
         type: mongoose.Schema.Types.ObjectId, ref: 'developers'
     },
     genres:[{
-        type: mongoose.Schema.Types.ObjectId, ref: 'genres'
+        type: String
     }]
 });
 
@@ -55,14 +55,14 @@ const VideoGames = {
             return err;
         });
     },
-    getVideoGamerById : function( idGame ){
+    getVideoGameById : function( idGame ){
     return VideoGamesCollection
         .findOne({ _id : idGame })
          .then( game => {
             if( !game ){
                 throw new Error( "Game not found" );
             }
-             return author;
+             return game;
             })
             .catch( err => {
                 throw new Error( err );

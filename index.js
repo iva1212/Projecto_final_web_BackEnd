@@ -75,6 +75,21 @@ app.get('/api/games',(req,res)=>{
         return res.status(500).end();
     })
 });
+app.get('/api/games/:id',(req,res)=>{
+    let id = req.params.id;
+    if( !id ){
+        res.statusMessage = "Please send the 'id' to delete a bookmark";
+        return res.status( 406 ).end();
+    }
+    VideoGames.getVideoGameById(id)
+    .then(VideoGame =>{
+        return res.status(200).json(VideoGame);
+    })
+    .catch(err =>{
+        res.statusMessage = "Something went wrong with the DB,Try again Later.";
+        return res.status(500).end();
+    })
+})
 
 app.post('/api/games',jsonParser,(req,res)=>{
     console.log( "Body ", req.body );
