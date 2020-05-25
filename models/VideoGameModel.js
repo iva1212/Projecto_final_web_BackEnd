@@ -66,8 +66,28 @@ const VideoGames = {
             })
             .catch( err => {
                 throw new Error( err );
-        })},
-
+        })
+    },
+    getVideoGamesByGenre : function( genreObjectName ){
+        return VideoGamesCollection
+            .find({ genres : genreObjectName })
+            .then( allVideoGames => {
+                return allVideoGames;
+            })
+            .catch( err => {
+                throw new Error( err );
+            });
+    },
+    getVideoGamesByConsole : function( consoleObjectName ){
+        return VideoGamesCollection
+            .find({ consoles : consoleObjectName })
+            .then( allVideoGames => {
+                return allVideoGames;
+            })
+            .catch( err => {
+                throw new Error( err );
+            });
+    }
 }
 
 module.exports = {VideoGames};

@@ -98,7 +98,7 @@ app.post('/api/games',jsonParser,(req,res)=>{
     let description = req.body.description;
     let year = req.body.year;
     let img_url = req.body.img_url;
-    let consoleId = req.body.consoleId;
+    let consoles = req.body.consoles;
     let developerId = req.body.developerId;
     let genres = req.body.genres;
     if( !title || !description || !img_url){
@@ -106,7 +106,7 @@ app.post('/api/games',jsonParser,(req,res)=>{
 
         return res.status( 406 ).end();
     }
-    let newVideoGame = { title,description,year,img_url,consoleId,developerId,genres};
+    let newVideoGame = { title,description,year,img_url,consoles,developerId,genres};
     VideoGames
     .createVideoGame(newVideoGame)
     .then(result =>{
@@ -264,6 +264,56 @@ app.post('/api/users',jsonParser,(req,res)=>{
             return res.status( 400 ).end();
         });
 });
+
+app.get('/api/videogamesByGenre/:nameGenre', ( req,res ) => {
+    const { nameGenre } = req.params;
+
+    Genres
+        .getGenreByName( nameGenre )
+        .then( genres => {
+            const genreObjectName = genres.name;
+
+            VideoGames
+                .getVideoGamesByGenre( genreObjectName )
+                .then( videogames => {
+                    return res.status( 200 ).json( videogames );
+                })
+                .catch( err => {
+                    res.statusMessage = "Something went wrong when retrieving the Author's comments.";
+                    return res.status( 400 ).end();
+                });
+        })
+        .catch( err => {
+            res.statusMessage = `Something went wrong: ${err.message}.`;
+            return res.status( 400 ).end(); 
+        });
+});
+
+app.get('/api/videogamesByConsole/:nameConsole', ( req,res ) => {
+    const { nameConsole } = req.params;
+
+    Consoles
+        .getConsoleByName( nameConsole )
+        .then( console => {
+            const consoleObjectName = console.name;
+
+            VideoGames
+                .getVideoGamesByConsole( consoleObjectName )
+                .then( videogames => {
+                    return res.status( 200 ).json( videogames );
+                })
+                .catch( err => {
+                    res.statusMessage = "Something went wrong when retrieving the Author's comments.";
+                    return res.status( 400 ).end();
+                });
+        })
+        .catch( err => {
+            res.statusMessage = `Something went wrong: ${err.message}.`;
+            return res.status( 400 ).end(); 
+        });
+});
+
+
 
 app.listen(PORT, () =>
 {

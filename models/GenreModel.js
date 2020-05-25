@@ -34,6 +34,19 @@ const Genres = {
             return err;
         });
     },
+    getGenreByName : function( nameGenre ){
+        return GenresCollection
+        .findOne({ name : nameGenre })
+         .then( genre => {
+            if( !genre ){
+                throw new Error( "Genre not found" );
+            }
+             return genre;
+            })
+            .catch( err => {
+                throw new Error( err );
+        })
+    }
 
 }
 

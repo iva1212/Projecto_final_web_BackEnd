@@ -38,7 +38,19 @@ const Consoles = {
             return err;
         });
     },
-
+    getConsoleByName : function( nameConsole ){
+        return ConsolesCollection
+        .findOne({ name : nameConsole })
+         .then( console => {
+            if( !console ){
+                throw new Error( "Console not found" );
+            }
+             return console;
+            })
+            .catch( err => {
+                throw new Error( err );
+        })
+    },
 }
 
 module.exports = {Consoles};
