@@ -87,7 +87,20 @@ const VideoGames = {
             .catch( err => {
                 throw new Error( err );
             });
-    }
+    },
+    getVideoGamesByTitle : function( titleGame ){
+        return VideoGamesCollection
+            .findOne({ title : titleGame })
+             .then( game => {
+                if( !game ){
+                    throw new Error( "Game not found" );
+                }
+                 return game;
+                })
+                .catch( err => {
+                    throw new Error( err );
+            })
+        }
 }
 
 module.exports = {VideoGames};

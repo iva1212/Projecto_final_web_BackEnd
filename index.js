@@ -75,10 +75,11 @@ app.get('/api/games',(req,res)=>{
         return res.status(500).end();
     })
 });
+
 app.get('/api/games/:id',(req,res)=>{
     let id = req.params.id;
     if( !id ){
-        res.statusMessage = "Please send the 'id' to delete a bookmark";
+        res.statusMessage = "Please send the 'id'";
         return res.status( 406 ).end();
     }
     VideoGames.getVideoGameById(id)
@@ -89,7 +90,7 @@ app.get('/api/games/:id',(req,res)=>{
         res.statusMessage = "Something went wrong with the DB,Try again Later.";
         return res.status(500).end();
     })
-})
+});
 
 app.post('/api/games',jsonParser,(req,res)=>{
     console.log( "Body ", req.body );
@@ -279,7 +280,7 @@ app.get('/api/videogamesByGenre/:nameGenre', ( req,res ) => {
                     return res.status( 200 ).json( videogames );
                 })
                 .catch( err => {
-                    res.statusMessage = "Something went wrong when retrieving the Author's comments.";
+                    res.statusMessage = "Something went wrong when retrieving the genres.";
                     return res.status( 400 ).end();
                 });
         })
@@ -303,7 +304,7 @@ app.get('/api/videogamesByConsole/:nameConsole', ( req,res ) => {
                     return res.status( 200 ).json( videogames );
                 })
                 .catch( err => {
-                    res.statusMessage = "Something went wrong when retrieving the Author's comments.";
+                    res.statusMessage = "Something went wrong when retrieving the VideoGames.";
                     return res.status( 400 ).end();
                 });
         })
@@ -313,7 +314,37 @@ app.get('/api/videogamesByConsole/:nameConsole', ( req,res ) => {
         });
 });
 
+app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
+    const { titleGame } = req.params;
 
+    VideoGames
+        .getVideoGamesByTitle( titleGame )
+        .then( videogames =>{
+            return res.status(200).json( videogames );
+        })
+        .catch(err =>{
+            res.statusMessage = "Something went wrong with the DB,Try again Later.";
+            return res.status(500).end();
+        })
+});
+
+/*
+app.get('/api/games/:id',(req,res)=>{
+    let id = req.params.id;
+    if( !id ){
+        res.statusMessage = "Please send the 'id'";
+        return res.status( 406 ).end();
+    }
+    VideoGames.getVideoGameById(id)
+    .then(VideoGame =>{
+        return res.status(200).json(VideoGame);
+    })
+    .catch(err =>{
+        res.statusMessage = "Something went wrong with the DB,Try again Later.";
+        return res.status(500).end();
+    })
+});
+*/
 
 app.listen(PORT, () =>
 {
