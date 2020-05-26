@@ -38,10 +38,12 @@ app.post( '/api/users/login', jsonParser, ( req, res ) => {
 
                         let userData = {
                             name : user.name,
+                            last_name : user.last_name,
+                            type:user.type,
                             email : user.email
                         };
 
-                        jsonwebtoken.sign( userData, SECRET_TOKEN, {expiresIn : '1m'}, ( err, token ) => {
+                        jsonwebtoken.sign( userData, SECRET_TOKEN, {expiresIn : '30m'}, ( err, token ) => {
                             if( err ){
                                 res.statusMessage = err.message;
                                 return res.status( 400 ).end();
@@ -234,9 +236,10 @@ app.post('/api/users',jsonParser,(req,res)=>{
     console.log( "Body ", req.body );
 
     let name = req.body.name;
+    let last_name = req.body.last_name;
     let email = req.body.email;
     let password = req.body.password;
-    if( !name  || !email || !password){
+    if( !name  || !email || !password || !last_name){
         res.statusMessage = "One parameter is missing";
         return res.status( 406 ).end();
     }
@@ -245,6 +248,8 @@ app.post('/api/users',jsonParser,(req,res)=>{
         .then( hashedPassword => {
             let newUser = {
                 name,
+                last_name,
+                type: "normal",
                 password : hashedPassword,
                 email
             };

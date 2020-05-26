@@ -6,9 +6,17 @@ const UsersCollectionSchema = mongoose.Schema({
         type: String,
         required : true,
     },
+    last_name:{
+        type: String,
+        required : true,
+    },
     email:{
         type: String,
         required : true,
+    },
+    type:{
+        type:String,
+        required: true
     },
     likedgames:[{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'videogames'
