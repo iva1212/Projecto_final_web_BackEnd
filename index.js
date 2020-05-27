@@ -455,7 +455,9 @@ app.delete( '/api/removeUser', ( req, res ) => {
         return res.status( 406 ).end();
     }
 
-    return Users.deleteUserByName( name );
+    Users.deleteUserByName( name );
+
+    return res.status( 200 ).end();
 });
 
 app.delete( '/api/removeVideoGame', ( req, res ) => {
@@ -466,7 +468,9 @@ app.delete( '/api/removeVideoGame', ( req, res ) => {
         return res.status( 406 ).end();
     }
 
-    return VideoGames.deleteVideoGameByTitle( title );
+    VideoGames.deleteVideoGameByTitle( title );
+
+    return res.status( 200 ).end();
 });
 
 app.delete( '/api/removeDeveloper', ( req, res ) => {
@@ -477,7 +481,9 @@ app.delete( '/api/removeDeveloper', ( req, res ) => {
         return res.status( 406 ).end();
     }
 
-    return Developers.deleteDeveloperByName( name );
+    Developers.deleteDeveloperByName( name );
+
+    return res.status( 200 ).end();
 });
 
 app.delete( '/api/removeConsole', ( req, res ) => {
@@ -488,7 +494,9 @@ app.delete( '/api/removeConsole', ( req, res ) => {
         return res.status( 406 ).end();
     }
 
-    return Consoles.deleteConsoleByName( name );
+    Consoles.deleteConsoleByName( name );
+
+    return res.status( 200 ).end();
 });
 
 app.delete( '/api/removeGenre', ( req, res ) => {
@@ -499,7 +507,9 @@ app.delete( '/api/removeGenre', ( req, res ) => {
         return res.status( 406 ).end();
     }
 
-    return Consoles.deleteGenreByName( name );
+    Genres.deleteGenreByName( name );
+
+    return res.status( 200 ).end();
 });
 
 app.post( '/api/likeGame', jsonParser, ( req, res ) => {
@@ -531,60 +541,6 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
             return res.status( 406 ).end();
         });
 });
-
-
-/*app.post('/api/rating',jsonParser,(req,res)=>{
-    let email = req.body.email;
-    let gameId = req.body.game_Id;
-    let stars = req.body.stars;
-    let review = req.body.review;
-    let author_name;
-
-    Users.getUserByEmail(email)
-    .then((user) => {
-        author_name = user.name + " "+ user.last_name;
-        console.log(author_name);
-        if(author_name){
-            let newRating={stars,review,author_name}
-            Ratings.createRating(newRating)
-            .then((raiting)=>{
-                 VideoGames.getVideoGameById(gameId)
-                 .then((game)=> {
-                    console.log(game.title)
-                    console.log(user.name)
-
-                    game.ratings.push(raiting._id);
-                    user.ratings.push(raiting._id);
-                    var promiseG = game.save();
-                    assert.ok(promiseG instanceof Promise);
-                    promiseG.then((game)=>{
-                        var promiseU = user.save();
-                        assert.ok(promiseU instanceof Promise);
-                        promiseU.then((user)=>{
-                            return res.status( 200 ).end();
-                        })
-                    })
-
-                     })
-                     .catch((err)=> {
-                         console.log(err)
-                         return res.status( 406 ).end();
-                        });
-                
-            })
-        }
-        else{
-            return res.status( 406 ).end();
-        }
-    })
-    .catch((err)=> {
-        console.log(err)
-        return res.status( 406 ).end();
-    });
-    
-
-});*/
-
 
 app.listen(PORT, () =>
 {
