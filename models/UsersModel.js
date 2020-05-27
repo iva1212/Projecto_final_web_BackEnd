@@ -64,7 +64,16 @@ const Users = {
                 .catch( err => {
                     throw new Error( err.message );
                 }); 
-    }
+    },
+    addLikedGame : function( newLikedGame ){
+        return UsersCollection.create( newLikedGame )
+        .then ( likedGame =>{
+            return likedGame
+        })
+        .catch(err =>{
+            return err;
+        });
+    },
 }
 
 module.exports = {Users};
