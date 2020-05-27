@@ -16,7 +16,7 @@ const cors = require( './middleware/cors' );
 const app = express();
 const jsonParser = bodyParcer.json();
 const mongoose = require( 'mongoose' );
-
+const assert = require('assert') 
 app.use( cors );
 app.use( express.static( "public" ) );
 app.use(morgan('dev'));
@@ -222,6 +222,57 @@ app.post('/api/genres',jsonParser,(req,res)=>{
         return res.status(500).end();
     })
 });
+app.post('/api/rating',jsonParser,(req,res)=>{
+    let email = req.body.email;
+    let gameId = req.body.game_Id;
+    let stars = req.body.stars;
+    let review = req.body.review;
+
+    let author_name;
+    Users.getUserByEmail(email)
+    .then((user) => {
+        author_name = user.name + " "+ user.last_name;
+        console.log(author_name);
+        if(author_name){
+            let newRating={stars,review,author_name}
+            Ratings.createRating(newRating)
+            .then((raiting)=>{
+                 VideoGames.getVideoGameById(gameId)
+                 .then((game)=> {
+                    console.log(game.title)
+                    console.log(user.name)
+
+                    game.ratings.push(raiting._id);
+                    user.ratings.push(raiting._id);
+                    var promiseG = game.save();
+                    assert.ok(promiseG instanceof Promise);
+                    promiseG.then((game)=>{
+                        var promiseU = user.save();
+                        assert.ok(promiseU instanceof Promise);
+                        promiseU.then((user)=>{
+                            return res.status( 200 ).end();
+                        })
+                    })
+
+                     })
+                     .catch((err)=> {
+                         console.log(err)
+                         return res.status( 406 ).end();
+                        });
+                
+            })
+        }
+        else{
+            return res.status( 406 ).end();
+        }
+    })
+    .catch((err)=> {
+        console.log(err)
+        return res.status( 406 ).end();
+    });
+    
+
+});
 app.get('/api/users',(req,res)=>{
     Users.getAllUsers()
     .then(getAllUsers =>{
@@ -356,22 +407,23 @@ app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
         })
 });
 
-app.post('/api/likeGames', jsonParser, ( req, res ) => {
-    let id = req.body.id;
-    let email = req.body.email;
-
-    let newLikedGame = { id, email };
-
-    Users
-        .addLikedGame( newLikedGame )
-        .then(likedGame => {
-            return res.status(201).json(likedGame);
-        })
-        .catch(err => {
-            res.statusMessage = "Something went wrong with the DB,Try again Later.";
-            return res.status(500).end();
-        })
+/*
+app.get('/api/games/:id',(req,res)=>{
+    let id = req.params.id;
+    if( !id ){
+        res.statusMessage = "Please send the 'id'";
+        return res.status( 406 ).end();
+    }
+    VideoGames.getVideoGameById(id)
+    .then(VideoGame =>{
+        return res.status(200).json(VideoGame);
+    })
+    .catch(err =>{
+        res.statusMessage = "Something went wrong with the DB,Try again Later.";
+        return res.status(500).end();
+    })
 });
+*/
 
 app.listen(PORT, () =>
 {

@@ -26,7 +26,7 @@ const VideoGamesCollectionSchema = mongoose.Schema({
         type: String
     }],
     developerId:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'developers'
+        type:String
     },
     genres:[{
         type: String
