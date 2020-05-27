@@ -39,6 +39,19 @@ const Developers = {
             return err;
         });
     },
+    getDeveloperByName : function( nameDeveloper ){
+        return DevelopersCollection
+        .findOne({ name : nameDeveloper })
+         .then( Developer => {
+            if( !Developer ){
+                throw new Error( "Developer not found" );
+            }
+             return Developer;
+            })
+            .catch( err => {
+                throw new Error( err );
+        });
+    },
 
 }
 

@@ -294,6 +294,29 @@ app.get('/api/videogamesByGenre/:nameGenre', ( req,res ) => {
             return res.status( 400 ).end(); 
         });
 });
+app.get('/api/videogamesByDeveloper/:nameDeveloper', ( req,res ) => {
+    const { nameDeveloper } = req.params;
+
+    Developers
+        .getDeveloperByName( nameDeveloper )
+        .then( developers => {
+            const developerObjectName = developers.name;
+
+            VideoGames
+                .getVideoGamesByDeveloper( developerObjectName )
+                .then( videogames => {
+                    return res.status( 200 ).json( videogames );
+                })
+                .catch( err => {
+                    res.statusMessage = "Something went wrong when retrieving the developers.";
+                    return res.status( 400 ).end();
+                });
+        })
+        .catch( err => {
+            res.statusMessage = `Something went wrong: ${err.message}.`;
+            return res.status( 400 ).end(); 
+        });
+});
 
 app.get('/api/videogamesByConsole/:nameConsole', ( req,res ) => {
     const { nameConsole } = req.params;
@@ -321,7 +344,7 @@ app.get('/api/videogamesByConsole/:nameConsole', ( req,res ) => {
 
 app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
     const { titleGame } = req.params;
-
+    console.log(titleGame);
     VideoGames
         .getVideoGamesByTitle( titleGame )
         .then( videogames =>{

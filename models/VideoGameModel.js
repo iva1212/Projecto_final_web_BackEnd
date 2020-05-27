@@ -35,6 +35,7 @@ const VideoGamesCollectionSchema = mongoose.Schema({
 
 const VideoGamesCollection = mongoose.model('videogames',VideoGamesCollectionSchema);
 
+VideoGamesCollectionSchema.index({title: "text"});
 const VideoGames = {
     createVideoGame : function(newVideoGame){
         return VideoGamesCollection.create(newVideoGame)
@@ -78,6 +79,16 @@ const VideoGames = {
                 throw new Error( err );
             });
     },
+    getVideoGamesByDeveloper : function( developerObjectName ){
+        return VideoGamesCollection
+            .find({developer : developerObjectName })
+            .then( allVideoGames => {
+                return allVideoGames;
+            })
+            .catch( err => {
+                throw new Error( err );
+            });
+    },
     getVideoGamesByConsole : function( consoleObjectName ){
         return VideoGamesCollection
             .find({ consoles : consoleObjectName })
@@ -90,14 +101,13 @@ const VideoGames = {
     },
     getVideoGamesByTitle : function( titleGame ){
         return VideoGamesCollection
-            .findOne({ title : titleGame })
-             .then( game => {
-                if( !game ){
-                    throw new Error( "Game not found" );
-                }
-                 return game;
+            .find({ title: { $regex: titleGame, $options: 'i'}})
+             .then( games => {
+                 console.log(games);
+                    return games;
                 })
                 .catch( err => {
+                    console.log(err)
                     throw new Error( err );
             })
         }
