@@ -222,6 +222,7 @@ app.post('/api/genres',jsonParser,(req,res)=>{
         return res.status(500).end();
     })
 });
+
 app.post('/api/rating',jsonParser,(req,res)=>{
     let email = req.body.email;
     let gameId = req.body.game_Id;
@@ -273,6 +274,7 @@ app.post('/api/rating',jsonParser,(req,res)=>{
     
 
 });
+
 app.get('/api/ratingsByUser/:userId',(req,res)=>{
     const { userId } = req.params;
     console.log(userId)
@@ -309,6 +311,7 @@ app.get('/api/ratingsByGame/:gameId', (req,res) =>{
         console.log(err)
         return res.status(500).end();})
 });
+
 app.get('/api/users',(req,res)=>{
     Users.getAllUsers()
     .then(getAllUsers =>{
@@ -381,6 +384,7 @@ app.get('/api/videogamesByGenre/:nameGenre', ( req,res ) => {
             return res.status( 400 ).end(); 
         });
 });
+
 app.get('/api/videogamesByDeveloper/:nameDeveloper', ( req,res ) => {
     const { nameDeveloper } = req.params;
 
@@ -443,7 +447,7 @@ app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
         })
 });
 
-app.delete( '/api/removeUser/', ( req, res ) => {
+app.delete( '/api/removeUser', ( req, res ) => {
     let name = req.query.name;
 
     if( !name ){
@@ -454,7 +458,7 @@ app.delete( '/api/removeUser/', ( req, res ) => {
     return Users.deleteUserByName( name );
 });
 
-app.delete( '/api/removeVideoGame/', ( req, res ) => {
+app.delete( '/api/removeVideoGame', ( req, res ) => {
     let title = req.query.title;
 
     if( !title ){
@@ -465,7 +469,7 @@ app.delete( '/api/removeVideoGame/', ( req, res ) => {
     return VideoGames.deleteVideoGameByTitle( title );
 });
 
-app.delete( '/api/removeDeveloper/', ( req, res ) => {
+app.delete( '/api/removeDeveloper', ( req, res ) => {
     let name = req.query.name;
 
     if( !name ){
@@ -476,7 +480,7 @@ app.delete( '/api/removeDeveloper/', ( req, res ) => {
     return Developers.deleteDeveloperByName( name );
 });
 
-app.delete( '/api/removeConsole/', ( req, res ) => {
+app.delete( '/api/removeConsole', ( req, res ) => {
     let name = req.query.name;
 
     if( !name ){
@@ -487,7 +491,7 @@ app.delete( '/api/removeConsole/', ( req, res ) => {
     return Consoles.deleteConsoleByName( name );
 });
 
-app.delete( '/api/removeGenre/', ( req, res ) => {
+app.delete( '/api/removeGenre', ( req, res ) => {
     let name = req.query.name;
 
     if( !name ){
@@ -497,6 +501,90 @@ app.delete( '/api/removeGenre/', ( req, res ) => {
 
     return Consoles.deleteGenreByName( name );
 });
+
+app.post( '/api/likeGame', jsonParser, ( req, res ) => {
+    let email = req.body.email;
+    let id = req.body.id;
+
+    VideoGames
+        .getVideoGameById( id )
+        .then( game => {
+            Users
+                .getUserByEmail( email )
+                .then( user => {
+                    user.likedgames.push(game._id)
+                    console.log(user);
+                    var promiseU = user.save();
+                    assert.ok(promiseU instanceof Promise);
+                    promiseU.then( user =>{
+                        console.log(user);
+                        return res.status( 200 ).end();
+                    })
+                })
+                .catch((err)=> {
+                    console.log(err)
+                    return res.status( 406 ).end();
+                });
+        })
+        .catch((err)=> {
+            console.log(err)
+            return res.status( 406 ).end();
+        });
+});
+
+
+/*app.post('/api/rating',jsonParser,(req,res)=>{
+    let email = req.body.email;
+    let gameId = req.body.game_Id;
+    let stars = req.body.stars;
+    let review = req.body.review;
+    let author_name;
+
+    Users.getUserByEmail(email)
+    .then((user) => {
+        author_name = user.name + " "+ user.last_name;
+        console.log(author_name);
+        if(author_name){
+            let newRating={stars,review,author_name}
+            Ratings.createRating(newRating)
+            .then((raiting)=>{
+                 VideoGames.getVideoGameById(gameId)
+                 .then((game)=> {
+                    console.log(game.title)
+                    console.log(user.name)
+
+                    game.ratings.push(raiting._id);
+                    user.ratings.push(raiting._id);
+                    var promiseG = game.save();
+                    assert.ok(promiseG instanceof Promise);
+                    promiseG.then((game)=>{
+                        var promiseU = user.save();
+                        assert.ok(promiseU instanceof Promise);
+                        promiseU.then((user)=>{
+                            return res.status( 200 ).end();
+                        })
+                    })
+
+                     })
+                     .catch((err)=> {
+                         console.log(err)
+                         return res.status( 406 ).end();
+                        });
+                
+            })
+        }
+        else{
+            return res.status( 406 ).end();
+        }
+    })
+    .catch((err)=> {
+        console.log(err)
+        return res.status( 406 ).end();
+    });
+    
+
+});*/
+
 
 app.listen(PORT, () =>
 {
