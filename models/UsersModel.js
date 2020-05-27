@@ -80,10 +80,20 @@ const Users = {
         .then ( likedGame =>{
             return likedGame
         })
-        .catch(err =>{
-            return err;
-        });
+        .catch( err => {
+            throw new Error( err.message );
+        }); 
     },
+    deleteUserByName : function( nameObj ){
+        UsersCollection
+            .deleteOne( { name : nameObj })
+            .then( result => {
+                return result;
+            })
+            .catch( err => {
+                throw new Error( err.message );
+            }); 
+    }
 }
 
 module.exports = {Users};

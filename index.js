@@ -443,23 +443,60 @@ app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
         })
 });
 
-/*
-app.get('/api/games/:id',(req,res)=>{
-    let id = req.params.id;
-    if( !id ){
-        res.statusMessage = "Please send the 'id'";
+app.delete( '/api/removeUser/', ( req, res ) => {
+    let name = req.query.name;
+
+    if( !name ){
+        res.statusMessage = "Please send the 'name' to delete a student";
         return res.status( 406 ).end();
     }
-    VideoGames.getVideoGameById(id)
-    .then(VideoGame =>{
-        return res.status(200).json(VideoGame);
-    })
-    .catch(err =>{
-        res.statusMessage = "Something went wrong with the DB,Try again Later.";
-        return res.status(500).end();
-    })
+
+    return Users.deleteUserByName( name );
 });
-*/
+
+app.delete( '/api/removeVideoGame/', ( req, res ) => {
+    let title = req.query.title;
+
+    if( !title ){
+        res.statusMessage = "Please send the 'title' to delete a videoGame";
+        return res.status( 406 ).end();
+    }
+
+    return VideoGames.deleteVideoGameByTitle( title );
+});
+
+app.delete( '/api/removeDeveloper/', ( req, res ) => {
+    let name = req.query.name;
+
+    if( !name ){
+        res.statusMessage = "Please send the 'name' to delete a student";
+        return res.status( 406 ).end();
+    }
+
+    return Developers.deleteDeveloperByName( name );
+});
+
+app.delete( '/api/removeConsole/', ( req, res ) => {
+    let name = req.query.name;
+
+    if( !name ){
+        res.statusMessage = "Please send the 'name' to delete a student";
+        return res.status( 406 ).end();
+    }
+
+    return Consoles.deleteConsoleByName( name );
+});
+
+app.delete( '/api/removeGenre/', ( req, res ) => {
+    let name = req.query.name;
+
+    if( !name ){
+        res.statusMessage = "Please send the 'name' to delete a student";
+        return res.status( 406 ).end();
+    }
+
+    return Consoles.deleteGenreByName( name );
+});
 
 app.listen(PORT, () =>
 {

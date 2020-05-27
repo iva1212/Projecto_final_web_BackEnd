@@ -52,6 +52,16 @@ const Developers = {
                 throw new Error( err );
         });
     },
+    deleteDeveloperByName : function( nameObj ){
+        DevelopersCollection
+            .deleteOne( { name : nameObj })
+            .then( result => {
+                return result;
+            })
+            .catch( err => {
+                throw new Error( err.message );
+            }); 
+    }
 
 }
 

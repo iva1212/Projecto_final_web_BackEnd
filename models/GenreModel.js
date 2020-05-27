@@ -46,6 +46,16 @@ const Genres = {
             .catch( err => {
                 throw new Error( err );
         })
+    },
+    deleteGenreByName : function( nameObj ){
+        GenresCollection
+            .deleteOne( { name : nameObj })
+            .then( result => {
+                return result;
+            })
+            .catch( err => {
+                throw new Error( err.message );
+            }); 
     }
 
 }

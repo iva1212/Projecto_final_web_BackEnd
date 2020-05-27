@@ -51,6 +51,16 @@ const Consoles = {
                 throw new Error( err );
         })
     },
+    deleteConsoleByName : function( nameObj ){
+        ConsolesCollection
+            .deleteOne( { name : nameObj })
+            .then( result => {
+                return result;
+            })
+            .catch( err => {
+                throw new Error( err.message );
+            }); 
+    }
 }
 
 module.exports = {Consoles};
