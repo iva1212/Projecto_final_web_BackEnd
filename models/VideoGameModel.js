@@ -110,6 +110,16 @@ const VideoGames = {
                     console.log(err)
                     throw new Error( err );
             })
+        },
+        deleteVideoGameByTitle : function( titleObj ){
+            VideoGamesCollection
+                .deleteOne( { title : titleObj })
+                .then( result => {
+                    return result;
+                })
+                .catch( err => {
+                    throw new Error( err.message );
+                }); 
         }
 }
 

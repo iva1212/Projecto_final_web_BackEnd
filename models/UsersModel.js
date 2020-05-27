@@ -65,15 +65,26 @@ const Users = {
                     throw new Error( err.message );
                 }); 
     },
-    addLikedGame : function( newLikedGame ){
-        return UsersCollection.create( newLikedGame )
-        .then ( likedGame =>{
-            return likedGame
+    getUserByName : function( name ){
+        return UsersCollection
+        .findOne( { name } )
+        .then( user => {
+            return user;
         })
-        .catch(err =>{
-            return err;
-        });
+        .catch( err => {
+            throw new Error( err.message );
+        }); 
     },
+    deleteUserByName : function( nameObj ){
+        UsersCollection
+            .deleteOne( { name : nameObj })
+            .then( result => {
+                return result;
+            })
+            .catch( err => {
+                throw new Error( err.message );
+            }); 
+    }
 }
 
 module.exports = {Users};

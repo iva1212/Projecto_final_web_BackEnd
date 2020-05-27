@@ -10,6 +10,10 @@ const RatingsCollectionSchema = mongoose.Schema({
         type:String,
         required : true,
     },
+    author_name:{
+        type:String,
+        required : true,
+    }
 });
 
 const RatingsCollection = mongoose.model('ratings',RatingsCollectionSchema);
