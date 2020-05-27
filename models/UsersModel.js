@@ -65,6 +65,16 @@ const Users = {
                     throw new Error( err.message );
                 }); 
     },
+    getUserById : function( id ){
+        return UsersCollection
+                .findOne( { _id: id } )
+                .then( user => {
+                    return user;
+                })
+                .catch( err => {
+                    throw new Error( err.message );
+                }); 
+    },
     addLikedGame : function( newLikedGame ){
         return UsersCollection.create( newLikedGame )
         .then ( likedGame =>{

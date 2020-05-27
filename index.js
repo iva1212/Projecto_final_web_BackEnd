@@ -273,6 +273,42 @@ app.post('/api/rating',jsonParser,(req,res)=>{
     
 
 });
+app.get('/api/ratingsByUser/:userId',(req,res)=>{
+    const { userId } = req.params;
+    console.log(userId)
+    Users.getUserById(userId)
+    .then(user =>{
+        console.log(user);
+        Ratings.getRaitingsByIds(user.ratings)
+        .then(raitings=>{
+            return res.status(200).json(raitings);
+        })
+        .catch(err=>{
+            console.log(err)
+            return res.status(500).end();})
+    })
+    .catch(err=>{
+        console.log(err)
+        return res.status(500).end();
+    })
+});
+app.get('/api/ratingsByGame/:gameId', (req,res) =>{
+    const { gameId } = req.params;
+    VideoGames.getVideoGameById(gameId)
+    .then(game=>{
+        Ratings.getRaitingsByIds(game.ratings)
+        .then(raitings=>{
+            return res.status(200).json(raitings);
+        })
+        .catch(err=>{
+            console.log(err)
+            return res.status(500).end();})
+        
+    })
+    .catch(err=>{
+        console.log(err)
+        return res.status(500).end();})
+});
 app.get('/api/users',(req,res)=>{
     Users.getAllUsers()
     .then(getAllUsers =>{

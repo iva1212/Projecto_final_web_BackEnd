@@ -38,6 +38,16 @@ const Ratings = {
             return err;
         });
     },
+    getRaitingsByIds: function(idList){
+        return RatingsCollection
+        .find({_id:{'$in': idList}})
+        .then(allRatings =>{
+            return allRatings
+        })
+        .catch(err =>{
+            return err;
+        });
+    },
 
 }
 
