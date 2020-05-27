@@ -273,10 +273,10 @@ app.post('/api/rating',jsonParser,(req,res)=>{
     
 
 });
-app.get('/api/ratingsByUser/:userId',(req,res)=>{
-    const { userId } = req.params;
-    console.log(userId)
-    Users.getUserById(userId)
+app.get('/api/ratingsByUser/:userEmail',(req,res)=>{
+    const { userEmail } = req.params;
+    console.log(userEmail)
+    Users.getUserByEmail(userEmail)
     .then(user =>{
         console.log(user);
         Ratings.getRaitingsByIds(user.ratings)
