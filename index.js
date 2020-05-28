@@ -539,6 +539,7 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
             return res.status( 406 ).end();
         });
 });
+
 app.get( '/api/likeGame',jsonParser,  ( req, res ) => {
     let email = req.body.email;
     Users.getUserByEmail(email)
@@ -558,6 +559,35 @@ app.get( '/api/likeGame',jsonParser,  ( req, res ) => {
     });
 
 });
+
+app.delete( '/api/deleteLikedGame', jsonParser, ( req, res ) => {
+    let email = req.body.email;
+    let id = req.body.id;
+
+    Users.getUserByEmail(email)
+        .then(user =>{
+            if(user.likedgames.includes(id)){
+                for( i = 0; i < user.likedgames.length; i++ ){
+                    if(id == user.likedgames[i]){
+                        user.likedgames.splice(i, 1);
+                        var promiseU = user.save();
+                        assert.ok(promiseU instanceof Promise);
+                        promiseU.then(( user )=>{
+                            return res.status( 200 ).end();
+                        })
+                    }
+                }
+            }
+            else{
+                return res.status(404).end()
+            }
+        })
+        .catch((err)=> {
+            console.log(err)
+            return res.status( 406 ).end();
+        });  
+})
+
 app.post( '/api/isLiked',jsonParser,  ( req, res ) => {
     let email = req.body.email;
     let id = req.body.id;
