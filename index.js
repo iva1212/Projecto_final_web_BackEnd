@@ -1,5 +1,7 @@
 
 const express = require('express');
+const favicon = require('express-favicon');
+const path = require('path');
 const morgan = require( 'morgan' );
 const bodyParcer = require('body-parser');
 const bcrypt = require( 'bcryptjs' );
@@ -18,12 +20,40 @@ const jsonParser = bodyParcer.json();
 const mongoose = require( 'mongoose' );
 const assert = require('assert') 
 app.use( cors );
-app.use( express.static( "public" ) );
 app.use(morgan('dev'));
-
+app.use(favicon(__dirname + '/build/favicon.ico'));
+// the __dirname is the current directory from where the script is running
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('/ping', function (req, res) {
+ return res.send('pong');
+});
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/database', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/profile', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/admin', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/games/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/login', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+app.get('/signUp', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 app.post( '/api/users/login', jsonParser, ( req, res ) => {
     let { email, password } = req.body;
 
+    console.log(email)
+    console.log(password)
     if(!email || !password ){
         res.statusMessage = "Parameter missing in the body of the request.";
         return res.status( 406 ).end();
@@ -540,9 +570,9 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
         });
 });
 
-app.get( '/api/likeGame',jsonParser,  ( req, res ) => {
-    let email = req.body.email;
-    Users.getUserByEmail(email)
+app.get( '/api/likeGame/:userEmail',jsonParser,  ( req, res ) => {
+    const { userEmail } = req.params;
+    Users.getUserByEmail(userEmail)
     .then(user =>{
         VideoGames.getVideoGamesByIdList(user.likedgames)
             .then(games=>{
@@ -642,7 +672,7 @@ app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
         return res.status( 200 ).end();
 });
 
-app.listen(PORT, () =>
+app.listen(PORT, 'localhost',() =>
 {
     new Promise( (resolve,reject) =>{
 
