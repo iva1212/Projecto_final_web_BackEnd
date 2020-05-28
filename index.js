@@ -274,18 +274,10 @@ app.post('/api/rating',jsonParser,(req,res)=>{
     
 
 });
-<<<<<<< HEAD
 app.get('/api/ratingsByUser/:userEmail',(req,res)=>{
     const { userEmail } = req.params;
     console.log(userEmail)
     Users.getUserByEmail(userEmail)
-=======
-
-app.get('/api/ratingsByUser/:userId',(req,res)=>{
-    const { userId } = req.params;
-    console.log(userId)
-    Users.getUserById(userId)
->>>>>>> 521b8b01e8bf0b73eef91fbc8cf2abe79f3ceac1
     .then(user =>{
         console.log(user);
         Ratings.getRaitingsByIds(user.ratings)
@@ -454,11 +446,11 @@ app.get('/api/videoGamesByTitle/:titleGame', (req,res)=>{
         })
 });
 
-app.delete( '/api/removeUser', ( req, res ) => {
-    let name = req.query.name;
+app.delete( '/api/removeUser',jsonParser, ( req, res ) => {
+    let name = req.body.name;
 
     if( !name ){
-        res.statusMessage = "Please send the 'name' to delete a student";
+        res.statusMessage = "Please send the 'name' to delete a User";
         return res.status( 406 ).end();
     }
 
@@ -467,8 +459,8 @@ app.delete( '/api/removeUser', ( req, res ) => {
     return res.status( 200 ).end();
 });
 
-app.delete( '/api/removeVideoGame', ( req, res ) => {
-    let title = req.query.title;
+app.delete( '/api/removeVideoGame',jsonParser, ( req, res ) => {
+    let title = req.body.title;
 
     if( !title ){
         res.statusMessage = "Please send the 'title' to delete a videoGame";
@@ -480,11 +472,11 @@ app.delete( '/api/removeVideoGame', ( req, res ) => {
     return res.status( 200 ).end();
 });
 
-app.delete( '/api/removeDeveloper', ( req, res ) => {
-    let name = req.query.name;
+app.delete( '/api/removeDeveloper',jsonParser, ( req, res ) => {
+    let name = req.body.name;
 
     if( !name ){
-        res.statusMessage = "Please send the 'name' to delete a student";
+        res.statusMessage = "Please send the 'name' to delete a Developer";
         return res.status( 406 ).end();
     }
 
@@ -493,11 +485,11 @@ app.delete( '/api/removeDeveloper', ( req, res ) => {
     return res.status( 200 ).end();
 });
 
-app.delete( '/api/removeConsole', ( req, res ) => {
-    let name = req.query.name;
+app.delete( '/api/removeConsole',jsonParser, ( req, res ) => {
+    let name = req.body.name;
 
     if( !name ){
-        res.statusMessage = "Please send the 'name' to delete a student";
+        res.statusMessage = "Please send the 'name' to delete a Console";
         return res.status( 406 ).end();
     }
 
@@ -506,11 +498,11 @@ app.delete( '/api/removeConsole', ( req, res ) => {
     return res.status( 200 ).end();
 });
 
-app.delete( '/api/removeGenre', ( req, res ) => {
-    let name = req.query.name;
+app.delete( '/api/removeGenre',jsonParser, ( req, res ) => {
+    let name = req.body.name;
 
     if( !name ){
-        res.statusMessage = "Please send the 'name' to delete a student";
+        res.statusMessage = "Please send the 'name' to delete a genre";
         return res.status( 406 ).end();
     }
 
@@ -547,6 +539,41 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
             console.log(err)
             return res.status( 406 ).end();
         });
+});
+app.get( '/api/likeGame',jsonParser,  ( req, res ) => {
+    let email = req.body.email;
+    Users.getUserByEmail(email)
+    .then(user =>{
+        VideoGames.getVideoGamesByIdList(user.likedgames)
+            .then(games=>{
+                return res.status(200).json(games);
+            })
+            .catch((err)=> {
+                console.log(err)
+                return res.status( 406 ).end();
+            });
+    })
+    .catch((err)=> {
+        console.log(err)
+        return res.status( 406 ).end();
+    });
+
+});
+app.post( '/api/isLiked',jsonParser,  ( req, res ) => {
+    let email = req.body.email;
+    let id = req.body.id;
+    Users.getUserByEmail(email)
+    .then(user =>{
+        if(user.likedgames.includes(id))
+            return res.status(200).end()
+        else
+            return res.status(404).end()
+    })
+    .catch((err)=> {
+        console.log(err)
+        return res.status( 406 ).end();
+    });
+
 });
 
 app.listen(PORT, () =>
