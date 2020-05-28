@@ -142,6 +142,16 @@ const VideoGames = {
                         throw new Error( err );
                 })
             },
+            getVideoGamesByGenreList : function(genreList){
+                return VideoGamesCollection
+                .find({genres:{'$in': genreList}})
+                .then(allRatings =>{
+                    return allRatings
+                })
+                .catch(err =>{
+                    return err;
+                });
+            }
 }
 
 module.exports = {VideoGames};

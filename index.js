@@ -19,6 +19,24 @@ const app = express();
 const jsonParser = bodyParcer.json();
 const mongoose = require( 'mongoose' );
 const assert = require('assert') 
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }
 app.use( cors );
 app.use(morgan('dev'));
 app.use(favicon(__dirname + '/build/favicon.ico'));
@@ -675,18 +693,18 @@ app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
             VideoGames
                 .getVideoGamesByIdList( user.likedgames )
                 .then( vgames => {
-                    for(x = 0; x < vgames.length; x++){
-                        VideoGames
-                            .getVideoGamesByGenre( vgames[x].genres )
-                            .then( games => {
-                                /*VideoGames
-                                    .get*/
-                            })
-                            .catch((err)=> {
-                                console.log(err)
-                                return res.status( 406 ).end();
-                            });
-                    }
+                    var genres = Array.from(vgames,game=>game.genres)
+                    var flattened = [].concat.apply([],genres);
+                    let unique = [...new Set(flattened)];
+                    VideoGames.getVideoGamesByGenreList(unique)
+                    .then(games=>{
+                        shuffle(games)
+                        return res.status(200).json(games).end();
+                    })
+                    .catch((err)=> {
+                        console.log(err)
+                        return res.status( 406 ).end();
+                    });
                 })
                 .catch((err)=> {
                     console.log(err)
