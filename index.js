@@ -37,6 +37,7 @@ function shuffle(array) {
   
     return array;
   }
+
 app.use( cors );
 app.use(morgan('dev'));
 app.use(favicon(__dirname + '/build/favicon.ico'));
@@ -683,12 +684,12 @@ app.post( '/api/isLiked',jsonParser,  ( req, res ) => {
             });
 });*/
 
-app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
-    let email = req.body.email;
+app.get( '/api/recommendedGames/:userEmail', jsonParser, ( req, res ) => {
+    const {userEmail} = req.params;
     let g = [];
 
     Users
-        .getUserByEmail( email )
+        .getUserByEmail( userEmail)
         .then( user => {
             VideoGames
                 .getVideoGamesByIdList( user.likedgames )
@@ -698,8 +699,11 @@ app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
                     let unique = [...new Set(flattened)];
                     VideoGames.getVideoGamesByGenreList(unique)
                     .then(games=>{
-                        shuffle(games)
-                        return res.status(200).json(games).end();
+                        
+                        var result = games.filter(item => !vgames.some(other => item.title === other.title));
+                        shuffle(result)
+                        console.log(result)
+                        return res.status(200).json(result).end();
                     })
                     .catch((err)=> {
                         console.log(err)
