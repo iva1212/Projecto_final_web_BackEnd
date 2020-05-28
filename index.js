@@ -635,41 +635,70 @@ app.post( '/api/isLiked',jsonParser,  ( req, res ) => {
 
 });
 
-app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
+/*app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
     let email = req.body.email;
     let genre = [];
 
     Users
         .getUserByEmail( email )
         .then( user => {
-            for(i = 0; i < user.likedgames.length; i++){
-                VideoGames
-                    .getVideoGameById( user.likedgames[i] )
-                    .then( vgames => {
-                        genre[i] = vgames.genres;
+            console.log(user.name);
+            VideoGames
+                .getVideoGamesByIdList( user.likedgames[0] )
+                .then( vgames => {
+                    console.log(vgames);
+                    VideoGames
+                        .getVideoGamesByGenre( vgames[0].genres )
+                        .then( games => {
+                            console.log(games);
+                            return res.status(200).json(games).end();
+                        })
+                })
+                .catch((err)=> {
+                    console.log(err)
+                    return res.status( 406 ).end();
+                });
+            })
+            .catch((err)=> {
+                console.log(err)
+                return res.status( 406 ).end();
+            });
+});*/
+
+app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
+    let email = req.body.email;
+    let g = [];
+
+    Users
+        .getUserByEmail( email )
+        .then( user => {
+            VideoGames
+                .getVideoGamesByIdList( user.likedgames )
+                .then( vgames => {
+                    for(x = 0; x < vgames.length; x++){
                         VideoGames
-                            .getVideoGamesByGenre( genre[i] )
-                            .then(games => {
-                                //console.log(games);
-                                return res.status(200).json(games); 
+                            .getVideoGamesByGenre( vgames[x].genres )
+                            .then( games => {
+                                /*VideoGames
+                                    .get*/
                             })
                             .catch((err)=> {
                                 console.log(err)
                                 return res.status( 406 ).end();
                             });
-                    })
-                    .catch((err)=> {
-                        console.log(err)
-                        return res.status( 406 ).end();
-                    });
-                }
-        })
-        .catch((err)=> {
-            console.log(err)
-            return res.status( 406 ).end();
-        });
+                    }
+                })
+                .catch((err)=> {
+                    console.log(err)
+                    return res.status( 406 ).end();
+                });
+            })
+            .catch((err)=> {
+                console.log(err)
+                return res.status( 406 ).end();
+            });
 
-        return res.status( 200 ).end();
+        //return res.status(200).end();
 });
 
 app.listen(PORT, 'localhost',() =>
