@@ -120,8 +120,10 @@ Endopints
     DELETE
     Sending the user email and the videogame id, that videogame will be removed from the users liked games 
 
-/api/isLiked : 
-
+### /api/isLiked : 
+    Parameters (body of the request) : email, id
+    POST
+    Returns if  that game id is liked the the user with that email
 ### /api/recommendedGames
     GET
     Parameters (body of the request) : email
