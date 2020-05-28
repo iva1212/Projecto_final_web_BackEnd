@@ -30,7 +30,7 @@ const VideoGamesCollectionSchema = mongoose.Schema({
     },
     genres:[{
         type: String
-    }]
+    }],
 });
 
 const VideoGamesCollection = mongoose.model('videogames',VideoGamesCollectionSchema);
@@ -120,7 +120,18 @@ const VideoGames = {
                 .catch( err => {
                     throw new Error( err.message );
                 }); 
-        }
+        },
+        getVideoGamesByGenre : function( genreGame ){
+            return VideoGamesCollection
+                .find({ genres : genreGame })
+                 .then( games => {
+                        return games;
+                    })
+                    .catch( err => {
+                        console.log(err)
+                        throw new Error( err );
+                })
+            },
 }
 
 module.exports = {VideoGames};

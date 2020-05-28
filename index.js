@@ -527,7 +527,6 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
                     var promiseU = user.save();
                     assert.ok(promiseU instanceof Promise);
                     promiseU.then( user =>{
-                        console.log(user);
                         return res.status( 200 ).end();
                     })
                 })
@@ -540,6 +539,43 @@ app.post( '/api/likeGame', jsonParser, ( req, res ) => {
             console.log(err)
             return res.status( 406 ).end();
         });
+});
+
+app.get( '/api/recommendedGames', jsonParser, ( req, res ) => {
+    let email = req.body.email;
+    let genre = [];
+
+    Users
+        .getUserByEmail( email )
+        .then( user => {
+            for(i = 0; i < user.likedgames.length; i++){
+                VideoGames
+                    .getVideoGameById( user.likedgames[i] )
+                    .then( vgames => {
+                        genre[i] = vgames.genres;
+                        VideoGames
+                            .getVideoGamesByGenre( genre[i] )
+                            .then(games => {
+                                //console.log(games);
+                                return res.status(200).json(games); 
+                            })
+                            .catch((err)=> {
+                                console.log(err)
+                                return res.status( 406 ).end();
+                            });
+                    })
+                    .catch((err)=> {
+                        console.log(err)
+                        return res.status( 406 ).end();
+                    });
+                }
+        })
+        .catch((err)=> {
+            console.log(err)
+            return res.status( 406 ).end();
+        });
+
+        return res.status( 200 ).end();
 });
 
 app.listen(PORT, () =>
@@ -568,4 +604,3 @@ app.listen(PORT, () =>
     })
     console.log("This server is using port "+PORT);
 });
-
