@@ -723,7 +723,7 @@ app.get( '/api/recommendedGames/:userEmail', jsonParser, ( req, res ) => {
         //return res.status(200).end();
 });
 
-app.listen(PORT, 'localhost',() =>
+app.listen(PORT,() =>
 {
     new Promise( (resolve,reject) =>{
 
