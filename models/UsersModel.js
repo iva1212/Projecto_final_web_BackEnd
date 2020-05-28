@@ -21,9 +21,6 @@ const UsersCollectionSchema = mongoose.Schema({
     likedgames:[{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'videogames'
     }],
-    dislikedgames:[{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'videogames'
-    }],
     ratings : [{
         type: mongoose.Schema.Types.ObjectId, ref: 'rating'
     }],

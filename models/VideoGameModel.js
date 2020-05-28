@@ -69,6 +69,16 @@ const VideoGames = {
                 throw new Error( err );
         })
     },
+    getVideoGamesByIdList: function(idList){
+        return VideoGamesCollection
+            .find({_id:{'$in': idList}})
+            .then(allGames=>{
+                return allGames
+            })
+            .catch(err =>{
+                return err;
+            });
+    },
     getVideoGamesByGenre : function( genreObjectName ){
         return VideoGamesCollection
             .find({ genres : genreObjectName })
